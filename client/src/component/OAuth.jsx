@@ -26,13 +26,13 @@ export default function OAuth() {
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      console.log("error signin in", error.message);
+      console.log("error signin in ", error.message);
     }
   };
   return (
     <button
       onClick={hangleGoogleClick}
-      className="bg-red-700  text-white p-3 rounded-lg hover:opacity-90 uppercase"
+      className="bg-red-700 text-white p-3 rounded-lg hover:opacity-90 uppercase"
     >
       continue with google
     </button>
