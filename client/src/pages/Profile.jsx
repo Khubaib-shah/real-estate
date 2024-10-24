@@ -8,6 +8,8 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import {
+  deleteUserFailure,
+  deleteUserSuccess,
   signInFailure,
   updateUserFailure,
   updateUserStart,
@@ -102,7 +104,21 @@ export default function Profile() {
       return () => clearTimeout(timer);
     }
   }, [updateSuccess]);
-  console.log("Error from Redux:", error);
+  // console.log("Error from Redux:", error);
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserSuccess());
+      const res = await fetch(`api/user/delete${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.succes === false) {
+        dispatch(deleteUserFailure(data.message));
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {}
+    dispatch(deleteUserFailure(error.message));
+  };
 
   return (
     <div className="max-w-lg p-3 mx-auto">
@@ -172,7 +188,12 @@ export default function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <div>
