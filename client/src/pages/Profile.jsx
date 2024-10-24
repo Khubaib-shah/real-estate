@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -8,22 +8,28 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import {
+  signInFailure,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
 } from "../../redux/user/userSlice";
-import { useDispatch } from "react-redux";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
-  const [fileUplaodError, setFileUplaodError] = useState(false);
+  const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (file) {
+      setFileUploadError(false); // Reset error before upload
       handleFileUpload(file);
     }
   }, [file]);
@@ -43,15 +49,12 @@ export default function Profile() {
       },
       (error) => {
         console.error("Error while uploading:", error);
-        setFileUplaodError(true);
+        setFileUploadError(true);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
-            setFormData((prevData) => ({
-              ...prevData,
-              avatar: downloadURL,
-            }));
+            setFormData((prevData) => ({ ...prevData, avatar: downloadURL }));
             console.log("File available at:", downloadURL);
           })
           .catch((error) => {
@@ -60,14 +63,12 @@ export default function Profile() {
       }
     );
   };
-  console.log(filePercentage);
-  console.log(file);
-  console.log(fileUplaodError);
+
+  const notify = () => toast("User updated successfully!");
 
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  console.log(formData);
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -75,9 +76,7 @@ export default function Profile() {
       dispatch(updateUserStart());
       const resp = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await resp.json();
@@ -86,14 +85,28 @@ export default function Profile() {
         return;
       }
       dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+      notify();
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+
       console.log("msg", error);
     }
   };
+  useEffect(() => {
+    if (updateSuccess) {
+      const timer = setTimeout(() => {
+        setUpdateSuccess(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [updateSuccess]);
+  console.log("Error from Redux:", error);
+
   return (
-    <div className="max-w-lg  p-3 mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7"> Profile</h1>
+    <div className="max-w-lg p-3 mx-auto">
+      <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
       <form onSubmit={handleOnSubmit} className="flex flex-col gap-4">
         <input
           type="file"
@@ -115,12 +128,12 @@ export default function Profile() {
           src={formData.avatar || currentUser.avatar}
           onClick={() => fileRef.current.click()}
           alt="profile"
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center "
+          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center"
         />
         <p className="self-center text-sm">
-          {fileUplaodError ? (
+          {fileUploadError ? (
             <span className="text-red-700">
-              Error Image upload {`Image must be < 2 MB`}{" "}
+              Error Image upload {`Image must be < 2 MB`}
             </span>
           ) : filePercentage > 0 && filePercentage < 100 ? (
             <span>{`Uploading ${filePercentage}% `}</span>
@@ -145,21 +158,33 @@ export default function Profile() {
           onChange={handleOnChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder="password"
           className="rounded-lg p-3 border"
           id="password"
           onChange={handleOnChange}
         />
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
-          {" "}
-          {loading ? "Loading..." : "update"}
+        <button
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+          disabled={loading || (filePercentage > 0 && filePercentage < 100)}
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        {" "}
         <span className="text-red-700 cursor-pointer">Delete account</span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
+      </div>
+      <div>
+        <p className="text-red-700">{error && error}</p>
+      </div>
+      <div className="text-green-700">
+        {/* {updateSuccess && (
+          <p className="text-green-700">
+            
+          </p>
+        )} */}
+        <ToastContainer />
       </div>
     </div>
   );

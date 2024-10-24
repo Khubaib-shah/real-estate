@@ -31,8 +31,9 @@ export const userSlice = createSlice({
       state.error = null;
     },
     updateUserFailure: (state, action) => {
-      state.currentUser = action.payload;
+      state.error = action.payload;
       state.loading = false;
+
     },
   },
 });

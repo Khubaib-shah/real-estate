@@ -7,7 +7,8 @@ import {
   signInSuccess,
 } from "../../redux/user/userSlice";
 import OAuth from "../component/OAuth";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Signin = () => {
   const [formData, setFormData] = useState({
     email: "",
