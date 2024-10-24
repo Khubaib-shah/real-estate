@@ -7,19 +7,21 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 export default function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUplaodError, setFileUplaodError] = useState(false);
-  const [formData, setFormData] = useState({
-    username: currentUser.username || "",
-    email: currentUser.email || "",
-    avatar: currentUser.avatar || "",
-  });
-
+  const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -28,30 +30,27 @@ export default function Profile() {
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name; // Create a unique filename
+    const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        // Handle progress
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setFilePercentage(Math.round(progress));
       },
       (error) => {
-        // Handle unsuccessful uploads
         console.error("Error while uploading:", error);
         setFileUplaodError(true);
       },
       () => {
-        // Handle successful uploads
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
             setFormData((prevData) => ({
               ...prevData,
-              avatar: downloadURL, // Store the download URL in formData
+              avatar: downloadURL,
             }));
             console.log("File available at:", downloadURL);
           })
@@ -61,13 +60,41 @@ export default function Profile() {
       }
     );
   };
-  // console.log(filePercentage);
-  // console.log(file);
-  // console.log(fileUplaodError);
+  console.log(filePercentage);
+  console.log(file);
+  console.log(fileUplaodError);
+
+  const handleOnChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  console.log(formData);
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const resp = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await resp.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+      console.log("msg", error);
+    }
+  };
   return (
     <div className="max-w-lg  p-3 mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7"> Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleOnSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           ref={fileRef}
@@ -106,22 +133,27 @@ export default function Profile() {
           placeholder="username"
           className="rounded-lg p-3 border"
           id="username"
+          defaultValue={currentUser.username}
+          onChange={handleOnChange}
         />
         <input
           type="text"
           placeholder="email"
           className="rounded-lg p-3 border"
           id="email"
+          defaultValue={currentUser.email}
+          onChange={handleOnChange}
         />
         <input
           type="text"
           placeholder="password"
           className="rounded-lg p-3 border"
           id="password"
+          onChange={handleOnChange}
         />
         <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
           {" "}
-          update
+          {loading ? "Loading..." : "update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
