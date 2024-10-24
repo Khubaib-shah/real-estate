@@ -10,7 +10,6 @@ import { app } from "../firebase";
 import {
   deleteUserFailure,
   deleteUserSuccess,
-  signInFailure,
   signOutUserFailure,
   signOutUserSuccess,
   updateUserFailure,
@@ -20,7 +19,7 @@ import {
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Link } from "react-router-dom";
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
@@ -130,9 +129,9 @@ export default function Profile() {
         dispatch(signOutUserFailure(data.message));
         return;
       }
-      dispatch(signOutUserSuccess(data))
+      dispatch(signOutUserSuccess(data));
     } catch (error) {
-      dispatch(signOutUserFailure(error.message))
+      dispatch(signOutUserFailure(error.message));
     }
   };
 
@@ -202,6 +201,13 @@ export default function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg hover:opacity-95 text-center uppercase"
+          to={"/createlisting"}
+        >
+          {" "}
+          Create listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
