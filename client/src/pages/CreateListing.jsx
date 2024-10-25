@@ -6,11 +6,11 @@ export default function CreateListing() {
       <h1 className="font-semibold text-3xl text-center my-7">
         Create a listing
       </h1>
-      <form className="flex flex-col sm:flex-row ">
+      <form className="flex flex-col sm:flex-row gap-4 ">
         <div className=" flex flex-col  gap-4 flex-1">
           <input
             type="text"
-            placeholder="name"
+            placeholder="Name"
             className="border p-3 rounded-lg sm:w-full "
             id="name"
             maxLength="62"
@@ -19,7 +19,7 @@ export default function CreateListing() {
           />
           <textarea
             type="text"
-            placeholder="description"
+            placeholder="Description"
             className="border p-3 rounded-lg "
             id="description"
             maxLength="62"
@@ -64,6 +64,7 @@ export default function CreateListing() {
                 id="bedrooms"
                 min="1"
                 max="10"
+                placeholder="0"
                 required
                 className="p-3 borfer border-gray-300 rounded-lg"
               />
@@ -76,6 +77,7 @@ export default function CreateListing() {
                 min="1"
                 max="10"
                 required
+                placeholder="0"
                 className="p-3 borfer border-gray-300 rounded-lg"
               />
               <p>Bath</p>
@@ -85,13 +87,14 @@ export default function CreateListing() {
                 type="number"
                 id="regularPrice"
                 min="1"
+                placeholder="0"
                 max="10"
                 required
                 className="p-3 borfer border-gray-300 rounded-lg"
               />
               <div className="flex  flex-col items-center">
                 <p>Regular Price</p>
-                <span className="font-light text-sm">($ / Monthly)</span>
+                <span className=" text-sm">($ / Monthly)</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -100,18 +103,42 @@ export default function CreateListing() {
                 id="discountPrice"
                 min="1"
                 max="10"
+                placeholder="0"
                 required
                 className="p-3 borfer border-gray-300 rounded-lg"
               />
               <div className="flex  flex-col items-center">
                 <p>Discounted Price</p>
-                <span className="font-light text-sm">($ / Monthly)</span>
+                <span className=" text-sm">($ / Monthly)</span>
               </div>
             </div>
           </div>
         </div>
+        <div className="flex flex-col flex-1 gap-4">
+          <p className="font-semibold">
+            Images:{" "}
+            <span className="font-normal text-gray-600 ml-2">
+              {" "}
+              The first image will be the cover (max 6)
+            </span>
+          </p>
+          <div className="flex gap-4">
+            <input
+              className="p-3 border border-gray-300 rounded w-full"
+              type="file"
+              id="images"
+              accept="image/*"
+              multiple
+            />
+            <button className="p-3 text-green-700 border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80">
+              Upload
+            </button>
+          </div>
+          <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+            Create listting
+          </button>
+        </div>
       </form>
-      
     </main>
   );
 }
