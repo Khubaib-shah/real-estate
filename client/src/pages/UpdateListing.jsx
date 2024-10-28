@@ -35,11 +35,18 @@ export default function updatelisting() {
 
   useEffect(() => {
     const fetchListing = async () => {
-      const listingId = param.listingId
-      console.log(listingId)
-    }
-    fetchListing()
-  },[]);
+      const listingId = param.listingId;
+      // console.log(listingId);
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message)
+        return
+      }
+      setFormData(data)
+    };
+    fetchListing();
+  }, []);
   const handleImageSubmit = () => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -144,7 +151,7 @@ export default function updatelisting() {
     try {
       setLoading(true);
       setError(false);
-      const res = await fetch("api/listing/create", {
+      const res = await fetch(`/api/listing/update/${param.listingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -373,7 +380,7 @@ export default function updatelisting() {
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <div
-                key={url}
+                key={index}
                 className="flex  justify-between p-3 border items-center"
               >
                 <img
