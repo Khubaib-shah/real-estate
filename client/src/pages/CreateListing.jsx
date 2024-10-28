@@ -162,7 +162,7 @@ export default function CreateListing() {
       setLoading(false);
     }
   };
-  // console.log(formData);
+  console.log(formData);
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="font-semibold text-3xl text-center my-7">
