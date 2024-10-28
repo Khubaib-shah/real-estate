@@ -87,6 +87,7 @@ export default function CreateListing() {
       );
     });
   };
+  console.log()
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
@@ -130,8 +131,8 @@ export default function CreateListing() {
     if (+formData.regularPrice < +formData.discountPrice)
       return setError("Discount price must be lower than regular price");
 
-    console.log("Form data before submission:", formData);
-    console.log("Current user:", currentUser);
+    // console.log("Form data before submission:", formData);
+    // console.log("Current user:", currentUser);
     try {
       setLoading(true);
       setError(false);
@@ -148,21 +149,22 @@ export default function CreateListing() {
 
       const responseData = await res.json();
       console.log("API response:", responseData);
+      
       if (!responseData.success) {
         throw new Error(responseData.message || "Something went wrong");
       }
-      console.log(responseData.data._id);
       setLoading(false);
       if (responseData.data.success === false) {
         setError(data.message);
       }
+      // console.log(responseData.data.imageUrls);
       navigate(`/listing/${responseData.data._id}`)
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
   };
-  console.log(formData);
+  // console.log(formData);
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="font-semibold text-3xl text-center my-7">
@@ -176,7 +178,7 @@ export default function CreateListing() {
             className="border p-3 rounded-lg sm:w-full"
             id="name"
             maxLength="62"
-            minLength="10"
+            minLength="4"
             required
             onChange={handleChange}
             value={formData.name}
@@ -186,7 +188,7 @@ export default function CreateListing() {
             className="border p-3 rounded-lg"
             id="description"
             maxLength="250"
-            minLength="10"
+            minLength="4"
             required
             onChange={handleChange}
             value={formData.description}
@@ -198,7 +200,7 @@ export default function CreateListing() {
             id="address"
             name="address"
             maxLength="62"
-            minLength="10"
+            minLength="4"
             required
             onChange={handleChange}
             value={formData.address}
