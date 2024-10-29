@@ -34,6 +34,7 @@ export default function updatelisting() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // console.log(formData)
     const fetchListing = async () => {
       const listingId = param.listingId;
       // console.log(listingId);
@@ -46,7 +47,7 @@ export default function updatelisting() {
       setFormData(data)
     };
     fetchListing();
-  }, []);
+  }, [formData]);
   const handleImageSubmit = () => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -135,7 +136,7 @@ export default function updatelisting() {
     if (["number", "text", "textarea"].includes(type)) {
       setFormData({
         ...formData,
-        [id]: value,
+        [id]: value || "",
       });
     }
   };
@@ -195,8 +196,8 @@ export default function updatelisting() {
             maxLength="62"
             minLength="4"
             required
-            onChange={handleChange}
             value={formData.name}
+            onChange={handleChange}
           />
           <textarea
             placeholder="Description"
