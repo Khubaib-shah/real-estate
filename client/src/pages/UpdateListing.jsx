@@ -9,10 +9,10 @@ import { app } from "../firebase";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function updatelisting() {
+export default function UpdateListing() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const param = useParams();
+  const params = useParams();
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
@@ -34,20 +34,19 @@ export default function updatelisting() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // console.log(formData)
     const fetchListing = async () => {
-      const listingId = param.listingId;
-      // console.log(listingId);
+      const listingId = params.listingId;
       const res = await fetch(`/api/listing/get/${listingId}`);
       const data = await res.json();
       if (data.success === false) {
-        console.log(data.message)
-        return
+        console.log(data.message);
       }
-      setFormData(data)
+      console.log(data);
+      setFormData(data);
     };
     fetchListing();
-  }, [formData]);
+  }, []);
+
   const handleImageSubmit = () => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -108,6 +107,7 @@ export default function updatelisting() {
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
   };
+
   const handleRemoveImage = (index) => {
     setFormData({
       ...formData,
@@ -136,23 +136,28 @@ export default function updatelisting() {
     if (["number", "text", "textarea"].includes(type)) {
       setFormData({
         ...formData,
-        [id]: value || "",
+        [id]: value,
       });
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.imageUrls.length < 1)
-      return setError("You must upload at least one image");
-    if (+formData.regularPrice < +formData.discountPrice)
-      return setError("Discount price must be lower than regular price");
 
-    // console.log("Form data before submission:", formData);
-    // console.log("Current user:", currentUser);
     try {
+      // Validate inputs
+      if (formData.imageUrls.length < 1) {
+        return setError("You must upload at least one image");
+      }
+      if (+formData.regularPrice < +formData.discountPrice) {
+        return setError("Discount price must be lower than regular price");
+      }
+
+      // Start loading state
       setLoading(true);
       setError(false);
-      const res = await fetch(`/api/listing/update/${param.listingId}`, {
+
+      const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,23 +168,22 @@ export default function updatelisting() {
         }),
       });
 
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
       const responseData = await res.json();
+
       console.log("API response:", responseData);
 
-      if (!responseData.success) {
-        throw new Error(responseData.message || "Something went wrong");
-      }
-      setLoading(false);
-      if (responseData.data.success === false) {
-        setError(data.message);
-      }
-      // console.log(responseData.data.imageUrls);
-      navigate(`/listing/${responseData.data._id}`);
+      navigate(`/listing/${responseData._id}`);
     } catch (error) {
       setError(error.message);
+    } finally {
       setLoading(false);
     }
   };
+
   // console.log(formData);
   return (
     <main className="p-3 max-w-4xl mx-auto">
@@ -196,8 +200,8 @@ export default function updatelisting() {
             maxLength="62"
             minLength="4"
             required
-            value={formData.name}
             onChange={handleChange}
+            value={formData.name}
           />
           <textarea
             placeholder="Description"
@@ -381,7 +385,7 @@ export default function updatelisting() {
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <div
-                key={index}
+                key={url}
                 className="flex  justify-between p-3 border items-center"
               >
                 <img

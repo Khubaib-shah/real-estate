@@ -116,6 +116,7 @@ export default function Profile() {
         method: "DELETE",
       });
       const data = await res.json();
+      console.log(data);
       if (data.succes === false) {
         dispatch(deleteUserFailure(data.message));
       }
@@ -152,7 +153,7 @@ export default function Profile() {
     }
   };
 
-  console.log(userListings);
+  // console.log(userListings);
   const handleListingDelete = async (listingId) => {
     try {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
@@ -230,6 +231,7 @@ export default function Profile() {
           placeholder="password"
           className="rounded-lg p-3 border"
           id="password"
+          autoComplete="current-password"
           onChange={handleOnChange}
         />
         <button
@@ -302,7 +304,7 @@ export default function Profile() {
                   delete
                 </button>
                 <Link to={`/updatelisting/${listing._id}`}>
-                <button className="text-green-700 uppercase">edit</button>
+                  <button className="text-green-700 uppercase">edit</button>
                 </Link>
               </div>
             </div>
