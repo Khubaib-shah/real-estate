@@ -12,6 +12,8 @@ import {
   FaParking,
   FaShare,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import Contact from "../component/Contact";
 
 export default function Listing() {
   const [listing, setListing] = useState(null);
@@ -19,7 +21,9 @@ export default function Listing() {
   const [error, setError] = useState(false);
   const params = useParams();
   const [copied, setCopied] = useState(false);
-
+  const { currentUser } = useSelector((state) => state.user);
+  const [contactLandlord, setContactLandlord] = useState(false);
+  // console.log("currentUser", currentUser);
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -57,7 +61,7 @@ export default function Listing() {
     furnished,
   } = listing;
 
-  console.log(listing);
+  // console.log(listing);
   return (
     <main>
       <Swiper navigation={true} modules={[Navigation]} loop={true}>
@@ -119,7 +123,9 @@ export default function Listing() {
 
         <p className="text-slate-800">
           <span className="font-semibold text-black">Description - </span>
-          <span className="block text-sm sm:text-base  max-w-full text-justify indent-[100px]">{description}</span>
+          <span className="block text-sm sm:text-base  max-w-full text-justify indent-[100px]">
+            {description}
+          </span>
         </p>
         <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6">
           <li className="flex items-center gap-1 whitespace-nowrap text-sm sm:text-base">
@@ -139,6 +145,17 @@ export default function Listing() {
             {furnished ? "Furnished" : "Unfurnished"}
           </li>
         </ul>
+        {currentUser &&
+          listing.userRef !== currentUser._id &&
+          !contactLandlord &&(
+            <button
+              onClick={() => setContactLandlord(true)}
+              className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95"
+            >
+              Contact Landlord
+            </button>
+          )}
+          {contactLandlord && <Contact listing={listing}/>}
       </div>
     </main>
   );
