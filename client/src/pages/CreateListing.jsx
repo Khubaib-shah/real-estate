@@ -131,8 +131,6 @@ export default function CreateListing() {
     if (+formData.regularPrice < +formData.discountPrice)
       return setError("Discount price must be lower than regular price");
 
-    // console.log("Form data before submission:", formData);
-    // console.log("Current user:", currentUser);
     try {
       setLoading(true);
       setError(false);
@@ -164,7 +162,7 @@ export default function CreateListing() {
       setLoading(false);
     }
   };
-  // console.log(formData);
+  console.log(formData);
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="font-semibold text-3xl text-center my-7">
