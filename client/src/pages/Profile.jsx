@@ -293,7 +293,7 @@ export default function Profile() {
                   className="w-16 h-16 object-contain "
                 />
               </Link>
-              <Link className="text-slate-700 font-semibold flex-1 hover:underline truncate">
+              <Link to={`/listing/${listing._id}`} className="text-slate-700 font-semibold flex-1 hover:underline truncate">
                 <p>{listing.name}</p>
               </Link>
               <div className="flex flex-col items-center">
@@ -303,7 +303,7 @@ export default function Profile() {
                 >
                   delete
                 </button>
-                <Link to={`/updatelisting/${listing._id}`}>
+                <Link to={`/update-listing/${listing._id}`}>
                   <button className="text-green-700 uppercase">edit</button>
                 </Link>
               </div>

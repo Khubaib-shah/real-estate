@@ -38,9 +38,11 @@ export default function UpdateListing() {
       const listingId = params.listingId;
       const res = await fetch(`/api/listing/get/${listingId}`);
       const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-      }
+      // if (!data.success) {
+
+      //   console.log("data.message=>",data.message);
+      //   return
+      // }
       console.log(data);
       setFormData(data);
     };
@@ -145,7 +147,6 @@ export default function UpdateListing() {
     e.preventDefault();
 
     try {
-      // Validate inputs
       if (formData.imageUrls.length < 1) {
         return setError("You must upload at least one image");
       }
@@ -153,7 +154,6 @@ export default function UpdateListing() {
         return setError("Discount price must be lower than regular price");
       }
 
-      // Start loading state
       setLoading(true);
       setError(false);
 
@@ -172,11 +172,11 @@ export default function UpdateListing() {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
 
-      const responseData = await res.json();
+      const data = await res.json();
 
-      console.log("API response:", responseData);
+      console.log("API response:", data);
 
-      navigate(`/listing/${responseData._id}`);
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -385,7 +385,7 @@ export default function UpdateListing() {
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <div
-                key={url}
+                key={`${url}-${index}`}
                 className="flex  justify-between p-3 border items-center"
               >
                 <img
