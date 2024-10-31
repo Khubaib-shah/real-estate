@@ -13,8 +13,9 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
+  const [listing, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [listing, setListing] = useState(null);
+  const [showMore, setShowMore] = useState(false);
   console.log(sideBarData);
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -48,10 +49,16 @@ export default function Search() {
     }
     const fetchListing = async () => {
       setLoading(true);
+      setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`api/listing/get?${searchQuery}`);
       const data = await res.json();
-      setListing(data);
+      if (data.length > 9) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+      setListings(data);
       setLoading(false);
     };
     fetchListing();
@@ -97,6 +104,19 @@ export default function Search() {
     urlParams.set("order", sideBarData.order);
     const seacrhQuery = urlParams.toString();
     navigate(`/search?${seacrhQuery}`);
+  };
+  const onShowMoreClick = async () => {
+    const numberOfListings = listing.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.length < 9) {
+      setShowMore(false);
+    }
+    setListings([...listing, ...data]);
   };
   return (
     <div className="flex flex-col md:flex-row">
@@ -227,6 +247,14 @@ export default function Search() {
               listing.map((item, index) => (
                 <Card key={`${item}-${index}`} listing={item} />
               ))}
+            {showMore && (
+              <button
+                onClick={onShowMoreClick}
+                className="text-green-700 hover:underline p-7 text-center w-full"
+              >
+                Show more
+              </button>
+            )}
           </div>
         </div>
       </div>
