@@ -15,7 +15,7 @@ import {
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
-} from "../../redux/user/userSlice";
+} from "../redux/user/userSlice.js";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -293,7 +293,10 @@ export default function Profile() {
                   className="w-16 h-16 object-contain "
                 />
               </Link>
-              <Link to={`/listing/${listing._id}`} className="text-slate-700 font-semibold flex-1 hover:underline truncate">
+              <Link
+                to={`/listing/${listing._id}`}
+                className="text-slate-700 font-semibold flex-1 hover:underline truncate"
+              >
                 <p>{listing.name}</p>
               </Link>
               <div className="flex flex-col items-center">
