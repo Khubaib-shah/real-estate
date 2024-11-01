@@ -56,6 +56,7 @@ export default function Contact({ listing }) {
           ></textarea>
           <Link
             to={`https://mail.google.com/mail/?view=cm&fs=1&to=${landlord.email}&su=Regarding ${listing.name}&body=${message}`}
+            target="_blank"
             className="bg-slate-700 text-white text-center p-3 uppercase rounded-lg border-slate-900 hover:opacity-95 "
           >
             send message
