@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null); // Changed to lowercase for consistency
@@ -55,7 +55,7 @@ export default function Contact({ listing }) {
             onChange={OnChange}
           ></textarea>
           <Link
-            to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
+            to={`https://mail.google.com/mail/?view=cm&fs=1&to=${landlord.email}&su=Regarding ${listing.name}&body=${message}`}
             className="bg-slate-700 text-white text-center p-3 uppercase rounded-lg border-slate-900 hover:opacity-95 "
           >
             send message
