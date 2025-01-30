@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Contact({ listing }) {
-  const [landlord, setLandlord] = useState(null); // Changed to lowercase for consistency
-  const [loading, setLoading] = useState(true); // Added loading state
-  const [error, setError] = useState(false); // Added error state
-  const [message, setMessage] = useState(""); // Added error state
+  const [landlord, setLandlord] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchLandlord = async () => {
@@ -22,17 +22,17 @@ export default function Contact({ listing }) {
         console.error("Error fetching landlord:", error);
         setError(true);
       } finally {
-        setLoading(false); // Set loading to false in finally block
+        setLoading(false);
       }
     };
 
     if (listing.userRef) {
       fetchLandlord();
     }
-  }, [listing.userRef]); // Correct dependency to listing.userRef
+  }, [listing.userRef]);
 
-  if (loading) return <p>Loading...</p>; // Handle loading state
-  if (error) return <p>Something went wrong.</p>; // Handle error state
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Something went wrong.</p>;
   const OnChange = (e) => {
     setMessage(e.target.value);
   };
