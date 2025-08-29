@@ -23,7 +23,6 @@ export default function Listing() {
   const [copied, setCopied] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const [contactLandlord, setContactLandlord] = useState(false);
-  // console.log("currentUser", currentUser);
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -147,7 +146,7 @@ export default function Listing() {
         </ul>
         {currentUser &&
           listing.userRef !== currentUser._id &&
-          !contactLandlord &&(
+          !contactLandlord && (
             <button
               onClick={() => setContactLandlord(true)}
               className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95"
@@ -155,7 +154,7 @@ export default function Listing() {
               Contact Landlord
             </button>
           )}
-          {contactLandlord && <Contact listing={listing}/>}
+        {contactLandlord && <Contact listing={listing} />}
       </div>
     </main>
   );

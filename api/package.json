@@ -7,8 +7,8 @@
     "node": "20.x || 22.x"
   },
   "scripts": {
-    "start": "npm index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon api/index.js",
+    "start": "npm api/index.js"
   },
   "keywords": [],
   "author": "",
