@@ -1,12 +1,14 @@
 {
   "name": "real-estate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "20.x || 22.x"
+  },
   "scripts": {
-    "dev": "nodemon npm api/index.js",
-    "start": "npm api/index.js",
-    "build": "npm install && npm install --prefix client && npm run build -- prefix client"
+    "start": "npm index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",

@@ -1,27 +1,20 @@
 import express from "express";
-import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { ConnectDB } from "./config/connectDB.js";
+
 dotenv.config();
-mongoose
-  .connect(process.env.MONGO)
-  .then(() => {
-    console.log("connected to DB!");
-  })
-  .catch((error) => {
-    console.log("error", error);
-  });
+
 const __dirname = path.resolve();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.listen(3000, () => {
-  console.log("server is running on 3000!");
-});
+ConnectDB();
+const port = process.env.PORT || 3000;
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
@@ -39,4 +32,7 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+app.listen(port, () => {
+  console.log(`server is running on ${port}!`);
 });
